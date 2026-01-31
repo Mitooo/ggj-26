@@ -1,0 +1,22 @@
+[gd_scene format=3 uid="uid://btm8b418kfnrd"]
+
+[ext_resource type="Texture2D" uid="uid://74lfr4xihwic" path="res://assets/ptiboule_slip.png" id="1_gfcv4"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_ycayy"]
+radius = 55.0
+
+[node name="CharacterBody2D" type="RigidBody2D" unique_id=1322863585]
+
+[node name="Icon" type="Sprite2D" parent="." unique_id=2002087840]
+z_index = 1
+position = Vector2(29.999998, 36)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("1_gfcv4")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1467956682]
+shape = SubResource("CircleShape2D_ycayy")
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=1580142480]
+position = Vector2(15, 0)
+limit_left = 0
+limit_right = 1920
