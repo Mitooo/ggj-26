@@ -7,7 +7,6 @@
 [ext_resource type="AudioStream" uid="uid://jajllasebw0n" path="res://assets/sounds/collision/collision_03.mp3" id="5_54unw"]
 [ext_resource type="Shader" uid="uid://ccebsw2c3wyxm" path="res://scripts/shader/blur.gdshader" id="6_xr76w"]
 [ext_resource type="Texture2D" uid="uid://bv324fottsr1p" path="res://assets/visages.png" id="7_1o0ho"]
-[ext_resource type="Texture2D" uid="uid://4y40e1ouxtbf" path="res://icon.svg" id="7_nwmx8"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_y6phu"]
 friction = 0.4
@@ -34,6 +33,9 @@ shader_parameter/blur_amount = 1.50000007125
 [sub_resource type="AtlasTexture" id="AtlasTexture_xr76w"]
 atlas = ExtResource("2_xr76w")
 region = Rect2(1946, 265, 460, 691)
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_1o0ho"]
+load_path = "res://.godot/imported/kangoo.png-69112522fe216aafa7bb9125ad299603.ctex"
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_nwmx8"]
 atlas = ExtResource("7_1o0ho")
@@ -130,8 +132,10 @@ size_flags_vertical = 0
 
 [node name="SampleUiKangourou" type="TextureRect" parent="CanvasLayer/MarginContainer/HBoxKangourou" unique_id=1700920192]
 visible = false
+custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
-texture = ExtResource("7_nwmx8")
+texture = SubResource("CompressedTexture2D_1o0ho")
+expand_mode = 5
 
 [node name="StateFace" type="TextureRect" parent="CanvasLayer/MarginContainer" unique_id=1242061261]
 custom_minimum_size = Vector2(200, 0)

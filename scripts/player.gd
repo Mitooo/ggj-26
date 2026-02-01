@@ -46,6 +46,10 @@ var jump_count: int = 0
 var jump_ui_children = []
 var death_countdown: float = DEATH_COUNTDOWN_MAX
 var score: int = MAX_SCORE
+var stat_nb_slip: int = 0
+var stat_fall_distance: float = 0
+var previous_position: Vector2 = Vector2.ZERO
+var stat_key_pressed: int = 0
 
 var global_tween: Tween
 
@@ -58,6 +62,7 @@ func _ready() -> void:
 	
 
 func _on_slip_fusion() -> void:
+	stat_nb_slip += 1
 	score -= 10
 
 	if score <= MAX_SCORE and score > 200:
@@ -80,6 +85,10 @@ func init_player_values() -> void:
 	death_countdown = DEATH_COUNTDOWN_MAX
 	score = MAX_SCORE
 	state_face.texture.region = face_happy_rect
+	stat_nb_slip = 0
+	stat_fall_distance = 0
+	previous_position = Vector2.ZERO
+	stat_key_pressed = 0
 
 	for ui_element in jump_ui_children:
 		ui_element.queue_free()
@@ -88,6 +97,10 @@ func init_player_values() -> void:
 	refresh_polygon()
 
 func _process(delta: float) -> void:
+	if previous_position != Vector2.ZERO:
+		var travel =  previous_position-position
+		stat_fall_distance += travel.length()
+	
 	# Vérifier si le joueur est au sol pour compter le décompte de defaite
 	if linear_velocity.y <= 0.5 and linear_velocity.y >= -0.5:
 		death_countdown -= delta
@@ -99,9 +112,16 @@ func _process(delta: float) -> void:
 	if parachute_sprite.is_visible_in_tree():
 		parachute_sprite.global_position = global_position + Vector2.UP * 100
 		parachute_sprite.global_rotation = deg_to_rad(180)
+	
+	
+	print("nb:",stat_nb_slip," / fall:",int(stat_fall_distance)," / k:", stat_key_pressed)
+	previous_position = position
 
 
 func _input(event):
+	if(event is InputEventKey):
+		stat_key_pressed += 1
+	
 	# Mouvement de droite à gauche
 	if event.is_action_pressed("ui_right") and fart_counter > 0:
 		use_fart()
