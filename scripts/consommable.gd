@@ -46,8 +46,8 @@ func _on_body_entered(body: Node2D) -> void:
 				body.restart_timer()
 
 			GameManager.SlipType.BOMBO_SLIP:
-				print("Effet du BOMBO_SLIP appliqué au joueur")
+				body.call_deferred("reset_polygon")
 				
 			GameManager.SlipType.MAGNETO_SLIP:
-				print("Effet du MAGNETO_SLIP appliqué au joueur")
+				body.magneto_pull_around()
 		queue_free()

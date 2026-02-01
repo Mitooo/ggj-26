@@ -13,8 +13,10 @@ extends RigidBody2D
 
 @onready var sample_texture := $CanvasLayer/MarginContainer/HBoxContainer/Sample
 @onready var ui_jump_container: HBoxContainer = $CanvasLayer/MarginContainer/HBoxContainer
-
+@onready var sprite_container: Node2D = $SpriteContainer
 @onready var state_face: TextureRect = $CanvasLayer/MarginContainer/StateFace
+@onready var explo_slip_effect: CPUParticles2D = $ExploSlipEffect
+
 var face_normal_rect: Rect2 = Rect2(323, 55, 655, 873)
 var face_happy_rect: Rect2 = Rect2(997, 56, 655, 872)
 var face_angry_rect: Rect2 = Rect2(1716, 77, 655, 870)
@@ -24,26 +26,44 @@ var face_dead_rect: Rect2 = Rect2(2432, 83, 655, 873)
 @onready var effect_timer: Timer = $Effect
 @onready var polygon : CollisionPolygon2D = $Polygon2D
 
-var fart_ui_counter_list = []
+const MAX_SCORE: int = 250
+const DEATH_COUNTDOWN_MAX: float = 2
 
+var polygon_original: PackedVector2Array = PackedVector2Array()
+var fart_ui_counter_list = []
 var fart_counter: int = 0
 var jump_count: int = 0
-var death_countdown: float = 2.5
-
-
-var score: int = 200
+var death_countdown: float = DEATH_COUNTDOWN_MAX
+var score: int = MAX_SCORE
 
 signal player_died
 
 func _ready() -> void:
 	init_player_values()
+	GameManager.slip_fusion.connect(_on_slip_fusion)
+	polygon_original = polygon.polygon.duplicate()
+
+func _on_slip_fusion() -> void:
+	score -= 10
+
+	if score <= MAX_SCORE and score > 200:
+		state_face.texture.region = face_happy_rect
+	elif score <= 200 and score > 150:
+		state_face.texture.region = face_normal_rect
+	elif score <= 150 and score > 50:
+		state_face.texture.region = face_angry_rect
+	elif score <= 50:
+		state_face.texture.region = face_dead_rect
+	
+	if score <= 0:
+		player_died.emit()
 
 func init_player_values() -> void:
 	reset_fart_counter()
 	jump_count = 0
-	death_countdown = 2.5
-	score = 200
-	state_face.texture.region = face_normal_rect
+	death_countdown = DEATH_COUNTDOWN_MAX
+	score = MAX_SCORE
+	state_face.texture.region = face_happy_rect
 
 func _on_area_2d_body_entered(body: Node2D) -> void:
 	if body.is_in_group("terrain"):
@@ -54,10 +74,9 @@ func _process(delta: float) -> void:
 	if linear_velocity.y <= 0.5 and linear_velocity.y >= -0.5:
 		death_countdown -= delta
 		if death_countdown <= 0:
-			print("Le joueur est mort.")
 			player_died.emit()
 	else:
-		death_countdown = 2.5  # Réinitialiser le décompte si le joueur n'est pas au sol
+		death_countdown = DEATH_COUNTDOWN_MAX  # Réinitialiser le décompte si le joueur n'est pas au sol
 
 func _input(event):
 	# Mouvement de droite à gauche
@@ -68,7 +87,6 @@ func _input(event):
 		use_fart()
 		linear_velocity.x -= 400
 	if event.is_action_pressed("ui_accept") and jump_count > 0:
-		print("Jump!")
 		jump()
 	
 func set_blur(blurred: bool) -> void:
@@ -111,3 +129,25 @@ func use_fart() -> void:
 
 func update_poly(new_polygon) -> void:
 	polygon.polygon = new_polygon
+
+func reset_polygon() -> void:
+	score = MAX_SCORE
+	state_face.texture.region = face_happy_rect
+
+	polygon.polygon = polygon_original.duplicate()
+	
+	for child in sprite_container.get_children():
+		child.queue_free()
+
+	explo_slip_effect.emitting = true
+
+func magneto_pull_around() -> void:
+	# attire tous les objets du groupe "fusionnable" autour du joueur
+	var pull_radius: float = 1000.0
+
+	var player_global_pos: Vector2 = global_position
+	var fusionnables := get_tree().get_nodes_in_group("fusionnable")
+	for fusionnable in fusionnables:
+		var distance := player_global_pos.distance_to(fusionnable.global_position)
+		if distance <= pull_radius:
+			fusionnable.attracted_by_magneto()

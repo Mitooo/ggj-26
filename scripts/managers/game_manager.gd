@@ -10,6 +10,8 @@ var player_instance: Node = null
 var polygon_triangles: PackedInt32Array = PackedInt32Array()
 var current_slip_spawn_area: Polygon2D = null
 
+signal slip_fusion
+
 # Types de slips
 enum SlipType {
 	PETO_SLIP,
@@ -76,6 +78,7 @@ func fusion_polygon_with_player(slip_polygon) -> void:
 		player_instance.update_poly(new_poly)
 
 func fuse_slip_with_player(slip_node: Node2D, slip_collider: CollisionPolygon2D, slip_sprite: Sprite2D = null) -> void:
+	slip_fusion.emit()
 	var player_collider: CollisionPolygon2D = player_instance.polygon
 
 	# IMPORTANT: Geometry2D.merge_polygons() requires both polygons in the same coordinate space.
@@ -94,7 +97,7 @@ func fuse_slip_with_player(slip_node: Node2D, slip_collider: CollisionPolygon2D,
 	# Attache le visuel du slip au joueur
 	if slip_sprite != null:
 		var attached := slip_sprite.duplicate()
-		player_instance.add_child(attached)
+		player_instance.sprite_container.add_child(attached)
 		if attached is Node2D:
 			attached.global_transform = slip_sprite.global_transform
 

@@ -9,8 +9,8 @@
 [ext_resource type="Texture2D" uid="uid://bv324fottsr1p" path="res://assets/visages.png" id="7_1o0ho"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_y6phu"]
-friction = 0.5
-bounce = 0.6
+friction = 0.4
+bounce = 0.5
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_1o0ho"]
 atlas = ExtResource("2_xr76w")
@@ -36,6 +36,14 @@ region = Rect2(1946, 265, 460, 691)
 [sub_resource type="AtlasTexture" id="AtlasTexture_nwmx8"]
 atlas = ExtResource("7_1o0ho")
 region = Rect2(2432, 83, 655, 873)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_54unw"]
+atlas = ExtResource("2_xr76w")
+region = Rect2(1391, 1194, 490, 311)
+
+[sub_resource type="Curve" id="Curve_2tffh"]
+_data = [Vector2(0, 1), 0.0, 0.074096546, 0, 0, Vector2(1, 0), -3.198504, 0.0, 0, 0]
+point_count = 2
 
 [node name="Ridgidbody2D" type="RigidBody2D" unique_id=500544976 groups=["player"]]
 mass = 2.0
@@ -66,7 +74,7 @@ stream = SubResource("AudioStreamRandomizer_1o0ho")
 
 [node name="ColorRect" type="ColorRect" parent="." unique_id=942339258]
 visible = false
-z_index = 2
+z_index = 3
 material = SubResource("ShaderMaterial_1o0ho")
 offset_left = -1473.0
 offset_top = -1044.0
@@ -115,6 +123,28 @@ size_flags_horizontal = 0
 size_flags_vertical = 8
 texture = SubResource("AtlasTexture_nwmx8")
 expand_mode = 5
+
+[node name="ExploSlipEffect" type="CPUParticles2D" parent="." unique_id=1010314171]
+z_index = 2
+emitting = false
+amount = 10
+texture = SubResource("AtlasTexture_54unw")
+one_shot = true
+speed_scale = 0.75
+explosiveness = 0.5
+randomness = 0.2
+emission_shape = 1
+emission_sphere_radius = 40.76
+direction = Vector2(0, -1)
+initial_velocity_min = 635.65
+initial_velocity_max = 914.72
+angular_velocity_min = -368.37
+angular_velocity_max = 491.16
+scale_amount_min = 0.2
+scale_amount_max = 0.2
+scale_amount_curve = SubResource("Curve_2tffh")
+
+[node name="SpriteContainer" type="Node2D" parent="." unique_id=647113992]
 
 [connection signal="body_entered" from="Area2D" to="." method="_on_area_2d_body_entered"]
 [connection signal="timeout" from="Effect" to="." method="_on_effect_timeout"]
