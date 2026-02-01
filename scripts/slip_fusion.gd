@@ -26,6 +26,8 @@ func _ready() -> void:
 	slip_sprite.texture = atlas
 	slip_sprite.texture.region = slip_texture_regions.pick_random()
 
+	scale = Vector2.ONE * randf_range(0.5, 1.2)
+
 func _process(delta: float) -> void:
 	if is_attracted_by_magneto and target != null:
 		var direction = (target.global_position - global_position).normalized()
@@ -38,10 +40,10 @@ func _process(delta: float) -> void:
 			
 func _on_body_entered(body: Node2D) -> void:
 	if body.is_in_group("player"):
+		body.add_sound_effect("slip_froisse")
 		GameManager.fuse_slip_with_player(self, collision_polygon, slip_sprite)
 		queue_free()
 
 func attracted_by_magneto()  :
-	print("Slip attracted by magneto!")
 	is_attracted_by_magneto = true
 	target = GameManager.player_instance

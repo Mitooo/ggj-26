@@ -1,7 +1,8 @@
 [gd_scene format=3 uid="uid://deo2bayy6mkr7"]
 
-[ext_resource type="Script" path="res://scripts/bumper.gd" id="1_it2r0"]
+[ext_resource type="Script" uid="uid://cayig4gwytftw" path="res://scripts/bumper.gd" id="1_it2r0"]
 [ext_resource type="Texture2D" uid="uid://bwwbmkebdbpcx" path="res://assets/auvents.png" id="2_1bjqh"]
+[ext_resource type="AudioStream" uid="uid://3cae0bepjhpd" path="res://assets/sounds/saut/zboing_01.mp3" id="3_aqvcy"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_1bjqh"]
 atlas = ExtResource("2_1bjqh")
@@ -14,9 +15,11 @@ script = ExtResource("1_it2r0")
 polygon = PackedVector2Array(-113, -70, 115, 38, 116, 68, 108, 68, 103, 44, -112, -59)
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=17836007]
+z_index = 1
 texture = SubResource("AtlasTexture_1bjqh")
 
-[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="." unique_id=1794587986]
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="." unique_id=1750206304]
+stream = ExtResource("3_aqvcy")
 
 [node name="StaticBody2D" type="StaticBody2D" parent="." unique_id=727873638]
 

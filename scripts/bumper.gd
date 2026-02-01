@@ -12,5 +12,5 @@ func _on_body_entered(body: Node2D) -> void:
 	if body.is_in_group("player"):
 		body.apply_central_impulse(Vector2(force_direction * force))
 		
-	$AudioStreamPlayer.pitch_scale = randf_range(0.8,1.2)
-	$AudioStreamPlayer.play()
+	$AudioStreamPlayer2D.pitch_scale = randf_range(0.8,1.2)
+	$AudioStreamPlayer2D.play()

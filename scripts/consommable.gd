@@ -37,13 +37,16 @@ func _on_body_entered(body: Node2D) -> void:
 		match slip_type:
 			GameManager.SlipType.PETO_SLIP:
 				body.reset_fart_counter()
+				body.add_sound_effect("slip_froisse")
 
 			GameManager.SlipType.SLIP_KANGOUROU:
 				body.increase_jump_count()
+				body.add_sound_effect("slip_froisse")
 
 			GameManager.SlipType.SLIP_VISION:
 				body.set_blur(true)
 				body.restart_timer()
+				body.add_sound_effect("slip_froisse")
 
 			GameManager.SlipType.BOMBO_SLIP:
 				body.call_deferred("reset_polygon")

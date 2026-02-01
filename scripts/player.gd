@@ -1,13 +1,16 @@
 extends RigidBody2D
 
 @onready var audio_player: AudioStreamPlayer2D = $AudioStreamPlayer2D
-@onready var action_audio_player: AudioStreamPlayer2D = $AudioActionPlayer
 
 @onready var dash_sound_01: AudioStream = preload("res://assets/sounds/prouts/prout_mains_01.mp3")
 @onready var dash_sound_02: AudioStream = preload("res://assets/sounds/prouts/prout_mains_02.mp3")
 @onready var dash_sound_03: AudioStream = preload("res://assets/sounds/prouts/prout_mains_03.mp3")
 @onready var dash_sound_04: AudioStream = preload("res://assets/sounds/prouts/prout_mains_04.mp3")
 @onready var dash_sounds: Array = [dash_sound_01, dash_sound_02, dash_sound_03, dash_sound_04]
+
+@onready var exploslip_audio: AudioStream = preload("res://assets/sounds/slips/Exploslip.mp3")
+@onready var magnetoslip_audio: AudioStream = preload("res://assets/sounds/slips/magnetoslip.mp3")
+@onready var slip_froisse_audio: AudioStream = preload("res://assets/sounds/slips/slip_froissé.mp3")
 
 @onready var jump_sound: AudioStream = preload("res://assets/sounds/saut/zboing_02.mp3")
 
@@ -73,10 +76,6 @@ func init_player_values() -> void:
 	score = MAX_SCORE
 	state_face.texture.region = face_happy_rect
 
-func _on_area_2d_body_entered(body: Node2D) -> void:
-	if body.is_in_group("terrain"):
-		audio_player.play()
-
 func _process(delta: float) -> void:
 	# Vérifier si le joueur est au sol pour compter le décompte de defaite
 	if linear_velocity.y <= 0.5 and linear_velocity.y >= -0.5:
@@ -99,9 +98,7 @@ func _input(event):
 
 func _integrate_forces(state):
 	if state.linear_velocity.length()>MAX_FALL_SPEED:
-		print("limit speed")
 		state.linear_velocity=state.linear_velocity.normalized()*MAX_FALL_SPEED
-
 
 func set_blur(blurred: bool) -> void:
 	blur_rect.visible = blurred
@@ -129,8 +126,7 @@ func jump() -> void:
 	# gameplay
 	apply_impulse(Vector2(0, -2500), Vector2.ZERO)
 	jump_count -= 1
-	action_audio_player.stream = jump_sound
-	action_audio_player.play()
+	add_sound_effect("jump")
 	# ui
 	jump_ui_children[jump_ui_children.size()-1].queue_free()
 	jump_ui_children.remove_at(jump_ui_children.size()-1)
@@ -144,8 +140,7 @@ func increase_jump_count() -> void:
 
 func use_fart() -> void:
 	fart_counter -= 1
-	action_audio_player.stream = dash_sounds.pick_random()
-	action_audio_player.play()
+	add_sound_effect("dash")
 	fart_ui_counter_list[fart_counter].queue_free()
 	fart_ui_counter_list.remove_at(fart_counter)
 
@@ -153,6 +148,7 @@ func update_poly(new_polygon) -> void:
 	polygon.polygon = new_polygon
 
 func reset_polygon() -> void:
+	add_sound_effect("exploslip")
 	score = MAX_SCORE
 	state_face.texture.region = face_happy_rect
 
@@ -164,6 +160,7 @@ func reset_polygon() -> void:
 	explo_slip_effect.emitting = true
 
 func magneto_pull_around() -> void:
+	add_sound_effect("magnetoslip")
 	# attire tous les objets du groupe "fusionnable" autour du joueur
 	var pull_radius: float = 1000.0
 
@@ -173,3 +170,25 @@ func magneto_pull_around() -> void:
 		var distance := player_global_pos.distance_to(fusionnable.global_position)
 		if distance <= pull_radius:
 			fusionnable.attracted_by_magneto()
+
+func add_sound_effect(effect_type: String) -> void:
+	var action_audio_player: AudioStreamPlayer2D = AudioStreamPlayer2D.new()
+	add_child(action_audio_player)
+	action_audio_player.finished.connect(action_audio_player.queue_free)
+	action_audio_player.bus = "Effects"
+	match effect_type:
+		"exploslip":
+			action_audio_player.stream = exploslip_audio
+		"magnetoslip":
+			action_audio_player.stream = magnetoslip_audio
+		"slip_froisse":
+			action_audio_player.stream = slip_froisse_audio
+		"dash":
+			action_audio_player.stream = dash_sounds.pick_random()
+		"jump":
+			action_audio_player.stream = jump_sound
+	action_audio_player.play()
+
+func _on_body_entered(body: Node) -> void:
+	if body.is_in_group("terrain"):
+		audio_player.play()

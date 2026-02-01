@@ -17,9 +17,6 @@ bounce = 0.5
 atlas = ExtResource("2_xr76w")
 region = Rect2(1980, 1049, 450, 544)
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_y6phu"]
-radius = 57.21888
-
 [sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_1o0ho"]
 streams_count = 3
 stream_0/stream = ExtResource("3_1o0ho")
@@ -49,6 +46,9 @@ point_count = 2
 [node name="Ridgidbody2D" type="RigidBody2D" unique_id=500544976 groups=["player"]]
 mass = 2.0
 physics_material_override = SubResource("PhysicsMaterial_y6phu")
+continuous_cd = 2
+contact_monitor = true
+max_contacts_reported = 8
 script = ExtResource("1_y6phu")
 
 [node name="Icon" type="Sprite2D" parent="." unique_id=2002087840]
@@ -65,13 +65,10 @@ position = Vector2(15, 0)
 limit_left = 0
 limit_right = 1920
 
-[node name="Area2D" type="Area2D" parent="." unique_id=1281598826]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D" unique_id=251737827]
-shape = SubResource("CircleShape2D_y6phu")
-
 [node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="." unique_id=1456009023]
 stream = SubResource("AudioStreamRandomizer_1o0ho")
+volume_db = 7.0
+bus = &"Effects"
 
 [node name="ColorRect" type="ColorRect" parent="." unique_id=942339258]
 visible = false
@@ -87,8 +84,6 @@ size_flags_vertical = 3
 [node name="Effect" type="Timer" parent="." unique_id=406861536]
 wait_time = 3.0
 one_shot = true
-
-[node name="AudioActionPlayer" type="AudioStreamPlayer2D" parent="." unique_id=144806017]
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1203443970]
 
@@ -156,5 +151,5 @@ scale_amount_curve = SubResource("Curve_2tffh")
 
 [node name="SpriteContainer" type="Node2D" parent="." unique_id=647113992]
 
-[connection signal="body_entered" from="Area2D" to="." method="_on_area_2d_body_entered"]
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]
 [connection signal="timeout" from="Effect" to="." method="_on_effect_timeout"]
