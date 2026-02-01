@@ -13,6 +13,9 @@ extends RigidBody2D
 
 @onready var sample_texture := $CanvasLayer/MarginContainer/HBoxContainer/Sample
 @onready var ui_jump_container: HBoxContainer = $CanvasLayer/MarginContainer/HBoxContainer
+@onready var sample_kangou_texture := $CanvasLayer/MarginContainer/HBoxKangourou/SampleUiKangourou
+@onready var ui_kangou_container: HBoxContainer = $CanvasLayer/MarginContainer/HBoxKangourou
+
 @onready var sprite_container: Node2D = $SpriteContainer
 @onready var state_face: TextureRect = $CanvasLayer/MarginContainer/StateFace
 @onready var explo_slip_effect: CPUParticles2D = $ExploSlipEffect
@@ -28,11 +31,13 @@ var face_dead_rect: Rect2 = Rect2(2432, 83, 655, 873)
 
 const MAX_SCORE: int = 250
 const DEATH_COUNTDOWN_MAX: float = 2
+const MAX_FALL_SPEED: int = 1100
 
 var polygon_original: PackedVector2Array = PackedVector2Array()
 var fart_ui_counter_list = []
 var fart_counter: int = 0
 var jump_count: int = 0
+var jump_ui_children = []
 var death_countdown: float = DEATH_COUNTDOWN_MAX
 var score: int = MAX_SCORE
 
@@ -61,6 +66,9 @@ func _on_slip_fusion() -> void:
 func init_player_values() -> void:
 	reset_fart_counter()
 	jump_count = 0
+	for ui_element in jump_ui_children:
+		ui_element.queue_free()
+	jump_ui_children.clear()
 	death_countdown = DEATH_COUNTDOWN_MAX
 	score = MAX_SCORE
 	state_face.texture.region = face_happy_rect
@@ -88,7 +96,13 @@ func _input(event):
 		linear_velocity.x -= 400
 	if event.is_action_pressed("ui_accept") and jump_count > 0:
 		jump()
-	
+
+func _integrate_forces(state):
+	if state.linear_velocity.length()>MAX_FALL_SPEED:
+		print("limit speed")
+		state.linear_velocity=state.linear_velocity.normalized()*MAX_FALL_SPEED
+
+
 func set_blur(blurred: bool) -> void:
 	blur_rect.visible = blurred
 
@@ -112,13 +126,21 @@ func reset_fart_counter() -> void:
 		fart_ui_counter_list.append(ui_element)
 
 func jump() -> void:
+	# gameplay
 	apply_impulse(Vector2(0, -2500), Vector2.ZERO)
 	jump_count -= 1
 	action_audio_player.stream = jump_sound
 	action_audio_player.play()
+	# ui
+	jump_ui_children[jump_ui_children.size()-1].queue_free()
+	jump_ui_children.remove_at(jump_ui_children.size()-1)
 
 func increase_jump_count() -> void:
 	jump_count += 1
+	var ui_element = sample_kangou_texture.duplicate()
+	ui_element.visible = true
+	ui_kangou_container.add_child(ui_element)
+	jump_ui_children.append(ui_element)
 
 func use_fart() -> void:
 	fart_counter -= 1

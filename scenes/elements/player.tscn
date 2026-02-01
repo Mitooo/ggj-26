@@ -7,6 +7,7 @@
 [ext_resource type="AudioStream" uid="uid://jajllasebw0n" path="res://assets/sounds/collision/collision_03.mp3" id="5_54unw"]
 [ext_resource type="Shader" uid="uid://ccebsw2c3wyxm" path="res://scripts/shader/blur.gdshader" id="6_xr76w"]
 [ext_resource type="Texture2D" uid="uid://bv324fottsr1p" path="res://assets/visages.png" id="7_1o0ho"]
+[ext_resource type="Texture2D" uid="uid://4y40e1ouxtbf" path="res://icon.svg" id="7_nwmx8"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_y6phu"]
 friction = 0.4
@@ -115,6 +116,15 @@ custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
 texture = SubResource("AtlasTexture_xr76w")
 expand_mode = 5
+
+[node name="HBoxKangourou" type="HBoxContainer" parent="CanvasLayer/MarginContainer" unique_id=631951214]
+layout_mode = 2
+size_flags_vertical = 0
+
+[node name="SampleUiKangourou" type="TextureRect" parent="CanvasLayer/MarginContainer/HBoxKangourou" unique_id=1700920192]
+visible = false
+layout_mode = 2
+texture = ExtResource("7_nwmx8")
 
 [node name="StateFace" type="TextureRect" parent="CanvasLayer/MarginContainer" unique_id=1242061261]
 custom_minimum_size = Vector2(250, 0)
