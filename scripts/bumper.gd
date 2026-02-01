@@ -1,6 +1,6 @@
 extends Area2D
 
-@export var force: float =  25.0
+@export var force: float =  10.0
 var force_direction: Vector2 
 
 var debug_bumper_position : Vector2 = Vector2.ZERO

@@ -1,0 +1,26 @@
+[gd_scene format=3 uid="uid://didva11vkvu1n"]
+
+[ext_resource type="Script" uid="uid://blbv6cc2qqi68" path="res://scripts/consommable.gd" id="1_t34p6"]
+[ext_resource type="Texture2D" uid="uid://bftyps7tj1n8l" path="res://assets/slipsss.png" id="2_t34p6"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_s7c30"]
+atlas = ExtResource("2_t34p6")
+region = Rect2(1341, 1651, 490, 311)
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_5gnp0"]
+radius = 22.0
+height = 84.0
+
+[node name="Area2D" type="Area2D" unique_id=836381238 groups=["consommable"]]
+script = ExtResource("1_t34p6")
+
+[node name="SlipPlaceholder" type="Sprite2D" parent="." unique_id=2115698747]
+z_index = 1
+scale = Vector2(0.2, 0.2)
+texture = SubResource("AtlasTexture_s7c30")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1741873102]
+rotation = 1.5707964
+shape = SubResource("CapsuleShape2D_5gnp0")
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]

@@ -1,14 +1,44 @@
 [gd_scene format=3 uid="uid://btm8b418kfnrd"]
 
-[ext_resource type="Texture2D" uid="uid://74lfr4xihwic" path="res://assets/ptiboule_slip.png" id="1_gfcv4"]
 [ext_resource type="Script" uid="uid://cn1mwsw4u0p5e" path="res://scripts/player.gd" id="1_y6phu"]
+[ext_resource type="Texture2D" uid="uid://bftyps7tj1n8l" path="res://assets/slipsss.png" id="2_xr76w"]
+[ext_resource type="AudioStream" uid="uid://c62lnu60ngiry" path="res://assets/sounds/collision/collision_01.mp3" id="3_1o0ho"]
+[ext_resource type="AudioStream" uid="uid://cgnnm1vp20he" path="res://assets/sounds/collision/collision_02.mp3" id="4_nwmx8"]
+[ext_resource type="AudioStream" uid="uid://jajllasebw0n" path="res://assets/sounds/collision/collision_03.mp3" id="5_54unw"]
+[ext_resource type="Shader" uid="uid://ccebsw2c3wyxm" path="res://scripts/shader/blur.gdshader" id="6_xr76w"]
+[ext_resource type="Texture2D" uid="uid://bv324fottsr1p" path="res://assets/visages.png" id="7_1o0ho"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_y6phu"]
 friction = 0.5
-bounce = 1.0
+bounce = 0.6
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1o0ho"]
+atlas = ExtResource("2_xr76w")
+region = Rect2(1980, 1049, 450, 544)
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_ycayy"]
 radius = 55.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_y6phu"]
+radius = 57.21888
+
+[sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_1o0ho"]
+streams_count = 3
+stream_0/stream = ExtResource("3_1o0ho")
+stream_1/stream = ExtResource("4_nwmx8")
+stream_2/stream = ExtResource("5_54unw")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_1o0ho"]
+shader = ExtResource("6_xr76w")
+shader_parameter/blur_amount = 1.50000007125
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xr76w"]
+atlas = ExtResource("2_xr76w")
+region = Rect2(1946, 265, 460, 691)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_nwmx8"]
+atlas = ExtResource("7_1o0ho")
+region = Rect2(2432, 83, 655, 873)
 
 [node name="Ridgidbody2D" type="RigidBody2D" unique_id=500544976 groups=["player"]]
 mass = 2.0
@@ -17,9 +47,9 @@ script = ExtResource("1_y6phu")
 
 [node name="Icon" type="Sprite2D" parent="." unique_id=2002087840]
 z_index = 1
-position = Vector2(29.999998, 36)
-scale = Vector2(0.1, 0.1)
-texture = ExtResource("1_gfcv4")
+position = Vector2(-2, 16)
+scale = Vector2(0.22, 0.22)
+texture = SubResource("AtlasTexture_1o0ho")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1467956682]
 shape = SubResource("CircleShape2D_ycayy")
@@ -28,3 +58,66 @@ shape = SubResource("CircleShape2D_ycayy")
 position = Vector2(15, 0)
 limit_left = 0
 limit_right = 1920
+
+[node name="Area2D" type="Area2D" parent="." unique_id=1281598826]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D" unique_id=251737827]
+shape = SubResource("CircleShape2D_y6phu")
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="." unique_id=1456009023]
+stream = SubResource("AudioStreamRandomizer_1o0ho")
+
+[node name="ColorRect" type="ColorRect" parent="." unique_id=942339258]
+visible = false
+z_index = 2
+material = SubResource("ShaderMaterial_1o0ho")
+offset_left = -1473.0
+offset_top = -1044.0
+offset_right = 1531.0
+offset_bottom = 898.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Effect" type="Timer" parent="." unique_id=406861536]
+wait_time = 3.0
+one_shot = true
+
+[node name="AudioActionPlayer" type="AudioStreamPlayer2D" parent="." unique_id=144806017]
+
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1203443970]
+
+[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer" unique_id=1331429628]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/margin_left = 50
+theme_override_constants/margin_top = 50
+theme_override_constants/margin_right = 50
+theme_override_constants/margin_bottom = 50
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/MarginContainer" unique_id=550247587]
+layout_mode = 2
+size_flags_vertical = 0
+alignment = 2
+
+[node name="Sample" type="TextureRect" parent="CanvasLayer/MarginContainer/HBoxContainer" unique_id=848887613]
+visible = false
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+texture = SubResource("AtlasTexture_xr76w")
+expand_mode = 5
+
+[node name="StateFace" type="TextureRect" parent="CanvasLayer/MarginContainer" unique_id=1242061261]
+custom_minimum_size = Vector2(250, 0)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 8
+texture = SubResource("AtlasTexture_nwmx8")
+expand_mode = 5
+
+[connection signal="body_entered" from="Area2D" to="." method="_on_area_2d_body_entered"]
+[connection signal="timeout" from="Effect" to="." method="_on_effect_timeout"]
