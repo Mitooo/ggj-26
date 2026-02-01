@@ -22,6 +22,7 @@ var face_dead_rect: Rect2 = Rect2(2432, 83, 655, 873)
 
 @onready var blur_rect: ColorRect = $ColorRect
 @onready var effect_timer: Timer = $Effect
+@onready var polygon : CollisionPolygon2D = $Polygon2D
 
 var fart_ui_counter_list = []
 
@@ -29,13 +30,21 @@ var fart_counter: int = 0
 var jump_count: int = 0
 var death_countdown: float = 2.5
 
+
 var score: int = 200
 
 signal player_died
 
 func _ready() -> void:
+	init_player_values()
+
+func init_player_values() -> void:
 	reset_fart_counter()
-	
+	jump_count = 0
+	death_countdown = 2.5
+	score = 200
+	state_face.texture.region = face_normal_rect
+
 func _on_area_2d_body_entered(body: Node2D) -> void:
 	if body.is_in_group("terrain"):
 		audio_player.play()
@@ -77,6 +86,7 @@ func reset_fart_counter() -> void:
 	fart_ui_counter_list.clear()
 	
 	fart_counter = 7
+
 	for i in range(fart_counter):
 		var ui_element = sample_texture.duplicate()
 		ui_element.visible = true
@@ -98,3 +108,6 @@ func use_fart() -> void:
 	action_audio_player.play()
 	fart_ui_counter_list[fart_counter].queue_free()
 	fart_ui_counter_list.remove_at(fart_counter)
+
+func update_poly(new_polygon) -> void:
+	polygon.polygon = new_polygon

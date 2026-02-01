@@ -16,9 +16,6 @@ bounce = 0.6
 atlas = ExtResource("2_xr76w")
 region = Rect2(1980, 1049, 450, 544)
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_ycayy"]
-radius = 55.0
-
 [sub_resource type="CircleShape2D" id="CircleShape2D_y6phu"]
 radius = 57.21888
 
@@ -51,8 +48,8 @@ position = Vector2(-2, 16)
 scale = Vector2(0.22, 0.22)
 texture = SubResource("AtlasTexture_1o0ho")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1467956682]
-shape = SubResource("CircleShape2D_ycayy")
+[node name="Polygon2D" type="CollisionPolygon2D" parent="." unique_id=1656895870]
+polygon = PackedVector2Array(-31, -36, -3, -34, 19, -38, 40, -38, 38, -18, 42, 14, 30, 38, 2, 44, -14, 34, -26, 37, -41, 24, -48, -1, -39, -27)
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=1580142480]
 position = Vector2(15, 0)

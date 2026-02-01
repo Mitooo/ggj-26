@@ -2,6 +2,13 @@ extends Area2D
 
 var slip_type: int = GameManager.SlipType.SLIP_KANGOUROU # Type de slip, à définir
 @onready var sprite: Sprite2D = $SlipPlaceholder
+@onready var effect_sprite: Sprite2D = $Effect
+
+func _ready() -> void:
+	# Tween pour faire tourner l'effet derrière le slip en continue
+	var tween := create_tween()
+	tween.set_loops(0)
+	tween.tween_property(effect_sprite, "rotation_degrees", 360, 2.0).from(0)
 
 func update_slip_type(new_type: int) -> void:
 	slip_type = new_type
