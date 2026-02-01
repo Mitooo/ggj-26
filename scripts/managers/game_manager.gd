@@ -22,7 +22,8 @@ enum SlipType {
 	SLIP_KANGOUROU,
 	SLIP_VISION,
 	BOMBO_SLIP,
-	MAGNETO_SLIP
+	MAGNETO_SLIP,
+	PARA_SLIP
 }
 
 const BUMPER_ZONES := [
@@ -107,7 +108,7 @@ func instantiate_slip_power(position: Vector2) -> void:
 	var slip_power_instance = slip_power_scene.instantiate().duplicate()
 	call_deferred("add_child", slip_power_instance)
 	slip_power_instance.position = position
-	var slip_type_rnd = randi() % 5
+	var slip_type_rnd = randi() % GameManager.SlipType.size()
 	slip_power_instance.call_deferred("update_slip_type", slip_type_rnd)
 
 func fusion_polygon_with_player(slip_polygon) -> void:

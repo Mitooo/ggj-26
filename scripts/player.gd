@@ -20,6 +20,7 @@ extends RigidBody2D
 @onready var ui_kangou_container: HBoxContainer = $CanvasLayer/MarginContainer/HBoxKangourou
 
 @onready var sprite_container: Node2D = $SpriteContainer
+@onready var parachute_sprite: Sprite2D = $Icon/ParachuteSprite
 @onready var state_face: TextureRect = $CanvasLayer/MarginContainer/StateFace
 @onready var explo_slip_effect: CPUParticles2D = $ExploSlipEffect
 
@@ -85,6 +86,11 @@ func _process(delta: float) -> void:
 	else:
 		death_countdown = DEATH_COUNTDOWN_MAX  # Réinitialiser le décompte si le joueur n'est pas au sol
 
+	if parachute_sprite.is_visible_in_tree():
+		parachute_sprite.global_position = global_position + Vector2.UP * 100
+		parachute_sprite.global_rotation = deg_to_rad(180)
+
+
 func _input(event):
 	# Mouvement de droite à gauche
 	if event.is_action_pressed("ui_right") and fart_counter > 0:
@@ -97,8 +103,12 @@ func _input(event):
 		jump()
 
 func _integrate_forces(state):
-	if state.linear_velocity.length()>MAX_FALL_SPEED:
-		state.linear_velocity=state.linear_velocity.normalized()*MAX_FALL_SPEED
+	var max_fall_speed = MAX_FALL_SPEED
+	if parachute_sprite.is_visible_in_tree():
+		max_fall_speed = MAX_FALL_SPEED/2
+
+	if state.linear_velocity.length()>max_fall_speed:
+		state.linear_velocity=state.linear_velocity.normalized()*max_fall_speed
 
 func set_blur(blurred: bool) -> void:
 	blur_rect.visible = blurred
@@ -192,3 +202,8 @@ func add_sound_effect(effect_type: String) -> void:
 func _on_body_entered(body: Node) -> void:
 	if body.is_in_group("terrain"):
 		audio_player.play()
+
+func use_parachute() -> void:
+	parachute_sprite.visible = true
+	await get_tree().create_timer(2.0).timeout
+	parachute_sprite.visible = false

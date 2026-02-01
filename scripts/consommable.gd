@@ -30,6 +30,8 @@ func update_slip_type(new_type: int) -> void:
 			sprite.texture.region = Rect2(1391, 1194, 490, 311)
 		GameManager.SlipType.MAGNETO_SLIP:
 			sprite.texture.region = Rect2(732, 258, 491, 312)
+		GameManager.SlipType.PARA_SLIP:
+			sprite.texture.region = Rect2(838, 2138, 622, 470)
 
 func _on_body_entered(body: Node2D) -> void:
 	if body.is_in_group("player"):
@@ -53,4 +55,7 @@ func _on_body_entered(body: Node2D) -> void:
 				
 			GameManager.SlipType.MAGNETO_SLIP:
 				body.magneto_pull_around()
+			
+			GameManager.SlipType.PARA_SLIP:
+				body.use_parachute()
 		queue_free()
