@@ -1,0 +1,30 @@
+[gd_scene format=3 uid="uid://b7uevmnlm77it"]
+
+[ext_resource type="Script" uid="uid://cayig4gwytftw" path="res://scripts/bumper.gd" id="1_fxy2q"]
+[ext_resource type="Texture2D" uid="uid://bwwbmkebdbpcx" path="res://assets/auvents.png" id="2_dhreu"]
+[ext_resource type="AudioStream" uid="uid://3cae0bepjhpd" path="res://assets/sounds/saut/zboing_01.mp3" id="3_cfpyk"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1bjqh"]
+atlas = ExtResource("2_dhreu")
+region = Rect2(65, 303, 250, 136)
+
+[node name="Bumper" type="Area2D" unique_id=1058869078]
+script = ExtResource("1_fxy2q")
+
+[node name="CollisionShape2D" type="CollisionPolygon2D" parent="." unique_id=827015233]
+scale = Vector2(0.99677473, 1)
+polygon = PackedVector2Array(118.38181, -61, 31.100307, -17, -33.106777, 12, -120.38828, 32, -122.39475, 68, 123.39799, -54)
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=17836007]
+z_index = 1
+texture = SubResource("AtlasTexture_1bjqh")
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="." unique_id=1750206304]
+stream = ExtResource("3_cfpyk")
+
+[node name="StaticBody2D" type="StaticBody2D" parent="." unique_id=727873638]
+
+[node name="CollisionShape2D" type="CollisionPolygon2D" parent="StaticBody2D" unique_id=23340744]
+polygon = PackedVector2Array(122, -72, -45, 11, -126, 27, -126, 71, -108, 67, 128, -53)
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]

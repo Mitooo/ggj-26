@@ -5,7 +5,7 @@
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_s7c30"]
 atlas = ExtResource("2_p63t1")
-region = Rect2(122, 2158, 490, 311)
+region = Rect2(1391, 1194, 490, 311)
 
 [node name="Area2D" type="Area2D" unique_id=836381238 groups=["fusionnable"]]
 script = ExtResource("1_2l4kb")

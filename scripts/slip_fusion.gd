@@ -6,13 +6,12 @@ extends Area2D
 var slip_1 = Rect2(774, 703, 490, 312)
 var slip_2 = Rect2(1391, 684, 490, 311)
 var slip_3 = Rect2(110, 1218, 491, 312)
-var slip_4 = Rect2(1391, 1194, 490, 311)
-var slip_5 = Rect2(774, 1208, 490, 311)
-var slip_6 = Rect2(132, 1655, 490, 311)
-var slip_7 = Rect2(769, 1648, 490, 311)
-var slip_8 = Rect2(1341, 1651, 490, 311)
-var slip_9 = Rect2(122, 2158, 490, 311)
-var slip_texture_regions = [slip_1, slip_2, slip_3, slip_4, slip_5, slip_6, slip_7, slip_8, slip_9]
+var slip_4 = Rect2(774, 1208, 490, 311)
+var slip_5 = Rect2(132, 1655, 490, 311)
+var slip_6 = Rect2(769, 1648, 490, 311)
+var slip_7 = Rect2(1341, 1651, 490, 311)
+var slip_8 = Rect2(122, 2158, 490, 311)
+var slip_texture_regions = [slip_1, slip_2, slip_3, slip_4, slip_5, slip_6, slip_7, slip_8]
 
 var is_attracted_by_magneto: bool = false
 var target

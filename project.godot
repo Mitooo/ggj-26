@@ -15,6 +15,10 @@ run/main_scene="uid://bhtyb3ff25834"
 config/features=PackedStringArray("4.6", "Forward Plus")
 config/icon="res://icon.svg"
 
+[audio]
+
+buses/default_bus_layout="uid://jsd7y7ifpp0t"
+
 [autoload]
 
 GameManager="*uid://ba6geb03bbgja"
@@ -31,3 +35,4 @@ window/size/viewport_height=1080
 [rendering]
 
 rendering_device/driver.windows="d3d12"
+environment/defaults/default_clear_color=Color(0, 0, 0, 1)

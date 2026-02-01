@@ -76,6 +76,7 @@ polygon = PackedVector2Array(-31, -36, -3, -34, 19, -38, 40, -38, 38, -18, 42, 1
 position = Vector2(15, 0)
 limit_left = 0
 limit_right = 1920
+limit_bottom = 6245
 
 [node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="." unique_id=1456009023]
 stream = SubResource("AudioStreamRandomizer_1o0ho")
@@ -118,7 +119,7 @@ alignment = 2
 
 [node name="Sample" type="TextureRect" parent="CanvasLayer/MarginContainer/HBoxContainer" unique_id=848887613]
 visible = false
-custom_minimum_size = Vector2(100, 0)
+custom_minimum_size = Vector2(75, 0)
 layout_mode = 2
 texture = SubResource("AtlasTexture_xr76w")
 expand_mode = 5
@@ -133,7 +134,7 @@ layout_mode = 2
 texture = ExtResource("7_nwmx8")
 
 [node name="StateFace" type="TextureRect" parent="CanvasLayer/MarginContainer" unique_id=1242061261]
-custom_minimum_size = Vector2(250, 0)
+custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 8

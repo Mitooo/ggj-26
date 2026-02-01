@@ -24,6 +24,8 @@ extends RigidBody2D
 @onready var state_face: TextureRect = $CanvasLayer/MarginContainer/StateFace
 @onready var explo_slip_effect: CPUParticles2D = $ExploSlipEffect
 
+@onready var cul: Sprite2D = $Icon
+
 var face_normal_rect: Rect2 = Rect2(323, 55, 655, 873)
 var face_happy_rect: Rect2 = Rect2(997, 56, 655, 872)
 var face_angry_rect: Rect2 = Rect2(1716, 77, 655, 870)
@@ -45,12 +47,15 @@ var jump_ui_children = []
 var death_countdown: float = DEATH_COUNTDOWN_MAX
 var score: int = MAX_SCORE
 
+var global_tween: Tween
+
 signal player_died
 
 func _ready() -> void:
-	init_player_values()
 	GameManager.slip_fusion.connect(_on_slip_fusion)
 	polygon_original = polygon.polygon.duplicate()
+	init_player_values()
+	
 
 func _on_slip_fusion() -> void:
 	score -= 10
@@ -69,13 +74,18 @@ func _on_slip_fusion() -> void:
 
 func init_player_values() -> void:
 	reset_fart_counter()
+	
 	jump_count = 0
-	for ui_element in jump_ui_children:
-		ui_element.queue_free()
-	jump_ui_children.clear()
+	rotation_degrees = 0
 	death_countdown = DEATH_COUNTDOWN_MAX
 	score = MAX_SCORE
 	state_face.texture.region = face_happy_rect
+
+	for ui_element in jump_ui_children:
+		ui_element.queue_free()
+	jump_ui_children.clear()
+	
+	refresh_polygon()
 
 func _process(delta: float) -> void:
 	# Vérifier si le joueur est au sol pour compter le décompte de defaite
@@ -154,6 +164,13 @@ func use_fart() -> void:
 	fart_ui_counter_list[fart_counter].queue_free()
 	fart_ui_counter_list.remove_at(fart_counter)
 
+	if global_tween != null and global_tween.is_valid():
+		global_tween.stop_all()
+
+	global_tween = create_tween()
+	global_tween.tween_property(cul, "scale", Vector2(0.18, 0.22), 0.1)
+	global_tween.tween_property(cul, "scale", Vector2(0.22, 0.22), 0.1)
+
 func update_poly(new_polygon) -> void:
 	polygon.polygon = new_polygon
 
@@ -162,12 +179,14 @@ func reset_polygon() -> void:
 	score = MAX_SCORE
 	state_face.texture.region = face_happy_rect
 
+	refresh_polygon()
+	explo_slip_effect.emitting = true
+
+func refresh_polygon():
 	polygon.polygon = polygon_original.duplicate()
 	
 	for child in sprite_container.get_children():
 		child.queue_free()
-
-	explo_slip_effect.emitting = true
 
 func magneto_pull_around() -> void:
 	add_sound_effect("magnetoslip")

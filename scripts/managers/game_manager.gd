@@ -4,11 +4,11 @@ extends Node
 @onready var slip_power_scene = preload("res://scenes/slip.tscn")
 @onready var slip_scene = preload("res://scenes/elements/slip_fusion.tscn")
 @onready var bumper_scene = preload("res://scenes/elements/bumper.tscn")
+@onready var bumper_right_scene = preload("res://scenes/elements/bumper_right.tscn")
 
 var initial_player_position = Vector2(945, -5745)
-var slip_positions = []  # Positions où les slips seront placés
-var bumper_positions = []  # Positions où les bumpers seront placés
-var bumper_instances: Array[Node] = []
+var slip_instances = []  # liste des slips
+var bumper_instances = []  # liste des bumpers
 var player_instance: Node = null
 var polygon_triangles:= PackedInt32Array()
 var current_slip_spawn_area:Polygon2D = null
@@ -33,6 +33,15 @@ const BUMPER_ZONES := [
 	{ "x": 616.0, "y_from": 3678.0, "y_to": 5227.0 },
 ]
 
+const BUMPER_RIGHT_ZONES := [
+	{ "x": 1514, "y_from": -5615.0, "y_to": -3068.0 },
+	{ "x": 1589.0, "y_from": -2256.0, "y_to": -1652.0 },
+	{ "x": 1500.0, "y_from": -1230.0, "y_to": -312.0 },
+	{ "x": 1460.0, "y_from": 1655.0, "y_to": 2032.0 },
+	{ "x": 1315.0, "y_from": 2850.0, "y_to": 3356.0 },
+	{ "x": 1315.0, "y_from": 4117.0, "y_to": 5470.0 },
+]
+
 func _ready() -> void:
 	_rng.randomize()
 
@@ -45,14 +54,14 @@ func load_game(slip_spawn_area: Polygon2D = null) -> void:
 	player_instance.position = initial_player_position  # Set initial position
 	player_instance.call_deferred("init_player_values")
 	
-	slip_positions.clear()
-	_clear_spawned_bumpers()
-	bumper_positions.clear()
+	clear_spawned_slips()
+	clear_spawned_bumpers()
 	if slip_spawn_area != null:
 		if polygon_triangles.size() == 0:
 			polygon_triangles = Geometry2D.triangulate_polygon(slip_spawn_area.polygon)
-		current_slip_spawn_area = slip_spawn_area
+			current_slip_spawn_area = slip_spawn_area
 
+	var slip_positions := []
 	# charger les slips dans les triangles du polygon de spawn
 	var triangle_count := int(polygon_triangles.size() / 3)
 	for tri_index in range(triangle_count):
@@ -72,15 +81,17 @@ func load_game(slip_spawn_area: Polygon2D = null) -> void:
 		else:
 			instantiate_slip_power(slip_position)
 
-	_spawn_random_bumpers_in_zones(BUMPER_ZONES)
+	_spawn_random_bumpers_in_zones(BUMPER_ZONES, false)
+	_spawn_random_bumpers_in_zones(BUMPER_RIGHT_ZONES, true)
 	
 func instanciate_slip_at_position(position: Vector2) -> void:
 	var slip_instance = slip_scene.instantiate().duplicate()
 	call_deferred("add_child", slip_instance)
 	slip_instance.position = position
 	slip_instance.rotation_degrees = randf() * 360.0
+	slip_instances.append(slip_instance)
 
-func _spawn_random_bumpers_in_zones(zones: Array) -> void:
+func _spawn_random_bumpers_in_zones(zones: Array, is_right_zone: bool) -> void:
 	for zone in zones:
 		var x := float(zone.get("x", 0.0))
 		var y_from := float(zone.get("y_from", 0.0))
@@ -90,18 +101,26 @@ func _spawn_random_bumpers_in_zones(zones: Array) -> void:
 		var y := _rng.randf_range(y_min, y_max)
 
 		var bumper_position := Vector2(x, y)
-		bumper_positions.append(bumper_position)
-		_instantiate_bumper_at_position(bumper_position)
+		var bumper_instance = null
+		if is_right_zone:
+			bumper_instance = bumper_right_scene.instantiate().duplicate()
+		else:
+			bumper_instance = bumper_scene.instantiate().duplicate()
+		
+		bumper_instances.append(bumper_instance)
+		call_deferred("add_child", bumper_instance)
+		bumper_instance.position = bumper_position
 
-func _instantiate_bumper_at_position(position: Vector2) -> void:
-	var bumper_instance = bumper_scene.instantiate().duplicate()
-	bumper_instances.append(bumper_instance)
-	call_deferred("add_child", bumper_instance)
-	bumper_instance.position = position
+func clear_spawned_slips() -> void:
+	for s in slip_instances:
+		if s != null:
+			s.queue_free()
+	slip_instances.clear()
 
-func _clear_spawned_bumpers() -> void:
+func clear_spawned_bumpers() -> void:
 	for b in bumper_instances:
-		b.queue_free()
+		if b != null:
+			b.queue_free()
 	bumper_instances.clear()
 
 func instantiate_slip_power(position: Vector2) -> void:
@@ -110,6 +129,7 @@ func instantiate_slip_power(position: Vector2) -> void:
 	slip_power_instance.position = position
 	var slip_type_rnd = randi() % GameManager.SlipType.size()
 	slip_power_instance.call_deferred("update_slip_type", slip_type_rnd)
+	slip_instances.append(slip_power_instance)
 
 func fusion_polygon_with_player(slip_polygon) -> void:
 	if player_instance != null:
